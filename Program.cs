@@ -1,37 +1,29 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-
 var builder = WebApplication.CreateBuilder(args);
 
-// Adiciona serviços ao container
+// Serviços
 builder.Services.AddControllersWithViews();
-
-// Adiciona Swagger
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configuração do pipeline HTTP
+// Porta dinâmica (Railway define PORT)
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+app.Urls.Add($"http://0.0.0.0:{port}");
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 
-// Porta dinâmica (Railway define PORT)
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-app.Urls.Add($"http://0.0.0.0:{port}");
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
 app.UseAuthorization();
 
-// Ativa Swagger
+// Swagger
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
